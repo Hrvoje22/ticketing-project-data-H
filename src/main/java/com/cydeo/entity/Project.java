@@ -25,6 +25,7 @@ public class Project extends BaseEntity{
     private LocalDate endDate;
     @Enumerated(EnumType.STRING)
     private Status projectStatus;
+    //@Column(columnDefinition = "TEXT")
     private String projectDetail;
 
     @ManyToOne(fetch=FetchType.LAZY)
