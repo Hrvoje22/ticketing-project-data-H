@@ -43,6 +43,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteByUserName(String username) {
 
+        //we won't ever delete from DB, just UI
+
         userRepository.deleteByUserName(username);
     }
 
