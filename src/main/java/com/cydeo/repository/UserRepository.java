@@ -9,7 +9,7 @@ public interface UserRepository extends JpaRepository<User,Long> { //goes with e
 
     User findByUserName(String username);
 
-    @Transactional //if something goes bad it goes back to original
+    @Transactional //if something goes bad it goes back to original //it can be on the class level too
     void deleteByUserName(String username);
 
 
