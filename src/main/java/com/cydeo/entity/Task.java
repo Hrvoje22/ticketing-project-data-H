@@ -27,11 +27,11 @@ public class Task extends BaseEntity{
     private LocalDate assignedDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "employee_id")
     private User assignedEmployee;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "project_id")
+    @JoinColumn(name = "project_id") //not mandatory because it will make it like that by default
     private Project project;
 
 
