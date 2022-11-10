@@ -1,10 +1,15 @@
 package com.cydeo.service.impl;
 
+import com.cydeo.dto.ProjectDTO;
+import com.cydeo.dto.TaskDTO;
 import com.cydeo.dto.UserDTO;
 import com.cydeo.entity.User;
 import com.cydeo.mapper.UserMapper;
 import com.cydeo.repository.UserRepository;
+import com.cydeo.service.ProjectService;
+import com.cydeo.service.TaskService;
 import com.cydeo.service.UserService;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -16,10 +21,16 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final ProjectService projectService;
+    private final TaskService taskService;
 
-    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper) {
+
+
+    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, @Lazy ProjectService projectService,@Lazy TaskService taskService) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
+        this.projectService = projectService;
+        this.taskService = taskService;
     }
 
     @Override
@@ -71,13 +82,16 @@ public class UserServiceImpl implements UserService {
         //go to db and get that user with username
         User user = userRepository.findByUserName(username);
 
-        //change isDeleted field to true
-        user.setIsDeleted(true);
+        //check if this use can be deleted
+        if(checkIfUserCanBeDeleted(user)) {
 
-        //save the object in the db
-        userRepository.save(user);
+            //change isDeleted field to true
+            user.setIsDeleted(true);
 
+            //save the object in the db
+            userRepository.save(user);
 
+        }
 
     }
 
@@ -89,4 +103,27 @@ public class UserServiceImpl implements UserService {
         return users.stream().map(userMapper::convertToDTO).collect(Collectors.toList());
 
     }
+
+    private boolean checkIfUserCanBeDeleted(User user){ //because its private we can use entity or DTO
+
+        switch(user.getRole().getDescription()){
+
+            case "Manager":
+
+                List<ProjectDTO> projectDTOList = projectService.listAllNonCompletedByAssignedManager(userMapper.convertToDTO(user));
+                return projectDTOList.size()==0;
+
+            case "Employee":
+
+                List<TaskDTO> taskDTOList = taskService.listAllNonCompletedByAssignedEmployee(userMapper.convertToDTO(user));
+                return taskDTOList.size()==0;
+
+
+            default:
+                return true;
+        }
+
+    }
+
+
 }
