@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Entity
 @Table(name = "users")
-@Where(clause = "is_deleted=false") //any repository which is using user entity will include this
+//@Where(clause = "is_deleted=false") uncomment because of the complete option part5//any repository which is using user entity will include this
 public class User extends BaseEntity {
 
     private String firstName;
